@@ -74,3 +74,158 @@ dotnet ef migrations add InitialCreate --project   BlogApi.Infrastructure --star
 dotnet ef database update --project   BlogApi.Infrastructure --startup-project   BlogApi.Api --context BlogDbContext
 
 ```
+
+## 4. Project Structure
+
+```sh
+BlogApi/
+│── src/
+│   ├── BlogApi.Api/                  # API Layer (Controllers, DI, Config)
+│   │   ├── Controllers/              # API endpoints
+│   │   │   ├── AuthController.cs
+│   │   │   ├── PostsController.cs
+│   │   │   ├── CommentsController.cs
+│   │   │   ├── LikesController.cs
+│   │   │   └── BookmarksController.cs
+│   │   │
+│   │   ├── Middlewares/              # Custom middleware
+│   │   │   ├── ErrorHandlingMiddleware.cs
+│   │   │   └── LoggingMiddleware.cs
+│   │   │
+│   │   ├── Extensions/               # Extension methods for DI, Config
+│   │   │   ├── ServiceCollectionExtensions.cs
+│   │   │   └── ApplicationBuilderExtensions.cs
+│   │   │
+│   │   ├── Filters/                  # API filters (optional)
+│   │   │   └── ValidateModelFilter.cs
+│   │   │
+│   │   ├── Program.cs
+│   │   ├── appsettings.json
+│   │   └── appsettings.Development.json
+│   │
+│   ├── BlogApi.Application/          # Application Layer (Business logic)
+│   │   ├── Interfaces/               # Abstractions
+│   │   │   ├── IAuthService.cs
+│   │   │   ├── IPostService.cs
+│   │   │   ├── ICommentService.cs
+│   │   │   ├── ILikeService.cs
+│   │   │   └── IBookmarkService.cs
+│   │   │
+│   │   ├── Services/                 # Business logic implementations
+│   │   │   ├── AuthService.cs
+│   │   │   ├── PostService.cs
+│   │   │   ├── CommentService.cs
+│   │   │   ├── LikeService.cs
+│   │   │   └── BookmarkService.cs
+│   │   │
+│   │   ├── DTOs/                     # Data Transfer Objects
+│   │   │   ├── Auth/
+│   │   │   │   ├── LoginRequest.cs
+│   │   │   │   ├── RegisterRequest.cs
+│   │   │   │   └── AuthResponse.cs
+│   │   │   ├── Posts/
+│   │   │   │   ├── CreatePostRequest.cs
+│   │   │   │   ├── PostResponse.cs
+│   │   │   │   └── UpdatePostRequest.cs
+│   │   │   ├── Comments/
+│   │   │   │   ├── CommentRequest.cs
+│   │   │   │   └── CommentResponse.cs
+│   │   │   └── Common/
+│   │   │       ├── ApiResponse.cs
+│   │   │       └── PaginationResponse.cs
+│   │   │
+│   │   ├── Validators/               # FluentValidation rules
+│   │   │   ├── RegisterRequestValidator.cs
+│   │   │   ├── LoginRequestValidator.cs
+│   │   │   └── PostRequestValidator.cs
+│   │   │
+│   │   └── Mappings/                 # AutoMapper profiles
+│   │       └── MappingProfile.cs
+│   │
+│   ├── BlogApi.Domain/               # Domain Layer (Entities, Enums, Constants)
+│   │   ├── Entities/
+│   │   │   ├── User.cs
+│   │   │   ├── Post.cs
+│   │   │   ├── Comment.cs
+│   │   │   ├── Like.cs
+│   │   │   └── Bookmark.cs
+│   │   │
+│   │   ├── Enums/
+│   │   │   └── UserRoles.cs
+│   │   │
+│   │   └── Constants/
+│   │       └── ErrorMessages.cs
+│   │
+│   ├── BlogApi.Infrastructure/       # Infra Layer (EF Core, Repos, JWT, etc.)
+│   │   ├── Data/
+│   │   │   ├── ApplicationDbContext.cs
+│   │   │   └── DbSeeder.cs
+│   │   │
+│   │   ├── Repositories/             # Data access
+│   │   │   ├── GenericRepository.cs
+│   │   │   ├── PostRepository.cs
+│   │   │   └── UserRepository.cs
+│   │   │
+│   │   ├── Identity/                 # JWT, Auth, Password hashing
+│   │   │   ├── JwtTokenGenerator.cs
+│   │   │   └── PasswordHasher.cs
+│   │   │
+│   │   ├── Configurations/           # EF Core entity configs
+│   │   │   ├── UserConfiguration.cs
+│   │   │   ├── PostConfiguration.cs
+│   │   │   └── CommentConfiguration.cs
+│   │   │
+│   │   ├── Migrations/               # EF Core migrations
+│   │   │
+│   │   └── DependencyInjection.cs    # Infra DI setup
+│   │
+│   └── BlogApi.Shared/               # Shared utilities (Optional)
+│       ├── Helpers/
+│       │   ├── DateTimeHelper.cs
+│       │   └── SlugGenerator.cs
+│       └── Exceptions/
+│           ├── ApiException.cs
+│           └── ValidationException.cs
+│
+│── tests/                            # Unit & Integration tests
+│   ├── BlogApi.Tests/
+│   │   ├── Services/
+│   │   │   ├── AuthServiceTests.cs
+│   │   │   └── PostServiceTests.cs
+│   │   └── Controllers/
+│   │       └── PostsControllerTests.cs
+│
+│── docker-compose.yml                # Docker (API + DB + Redis later)
+│── Dockerfile
+│── README.md
+│── .gitignore
+```
+
+## 5. Highest-Level Diagram
+
+```mermaid
+flowchart LR
+    Client[Client Apps\n(Web, Mobile, Postman)] --> API[API Layer\n(Controllers, Minimal APIs)]
+    API --> App[Application Layer\n(Services, Business Logic)]
+    App --> Infra[Infrastructure Layer\n(Repositories, Identity, External Services)]
+    Infra --> DB[(Database\nSQL Server / EF Core)]
+    Infra --> Ext[External Services\n(e.g., Email, File Storage, Auth Providers)]
+
+    %% Flow back
+    DB --> Infra
+    Infra --> App
+    App --> API
+    API --> Client
+
+    %% Cross-cutting
+    subgraph CrossCutting[Cross-Cutting Concerns]
+        Logging[Serilog Logging]
+        Auth[JWT Auth & Roles]
+        Errors[Middleware: Error Handling]
+        Docs[Swagger/OpenAPI]
+    end
+
+    API --- CrossCutting
+    App --- CrossCutting
+    Infra --- CrossCutting
+```
