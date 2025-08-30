@@ -205,11 +205,11 @@ BlogApi/
 
 ```mermaid
 flowchart LR
-    Client[Client Apps\n(Web, Mobile, Postman)] --> API[API Layer\n(Controllers, Minimal APIs)]
-    API --> App[Application Layer\n(Services, Business Logic)]
-    App --> Infra[Infrastructure Layer\n(Repositories, Identity, External Services)]
-    Infra --> DB[(Database\nSQL Server / EF Core)]
-    Infra --> Ext[External Services\n(e.g., Email, File Storage, Auth Providers)]
+    Client[Client Apps<br>(Web, Mobile, Postman)] --> API[API Layer<br>(Controllers, Minimal APIs)]
+    API --> App[Application Layer<br>(Services, Business Logic)]
+    App --> Infra[Infrastructure Layer<br>(Repositories, Identity, External Services)]
+    Infra --> DB[(Database<br>SQL Server / EF Core)]
+    Infra --> Ext[External Services<br>(e.g., Email, File Storage, Auth Providers)]
 
     %% Flow back
     DB --> Infra
