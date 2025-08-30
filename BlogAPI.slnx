@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/tests/">
+    <Project Path="tests/BlogApi.IntegrationTests/BlogApi.IntegrationTests.csproj" />
+    <Project Path="tests/BlogAPI.UnitTests/BlogAPI.UnitTests.csproj" />
+  </Folder>
+  <Project Path="BlogAPI.Api/BlogAPI.Api.csproj" />
+  <Project Path="BlogAPI.Application/BlogAPI.Application.csproj" />
+  <Project Path="BlogAPI.Domain/BlogAPI.Domain.csproj" />
+  <Project Path="BlogAPI.Infrastructure/BlogAPI.Infrastructure.csproj" />
+  <Project Path="BlogAPI.SharedResources/BlogAPI.SharedResources.csproj" />
+</Solution>
